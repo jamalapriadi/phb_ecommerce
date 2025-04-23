@@ -22,7 +22,6 @@ Route::group(['prefix'=>'dashboard'], function(){
     Route::get('/',[DashboardController::class,'index'])->name('dashboard');
 
     Route::resource('categories',ProductCategoryController::class);
-    Route::get('products',[DashboardController::class,'products'])->name('products');
 
 })->middleware(['auth', 'verified']);
 
