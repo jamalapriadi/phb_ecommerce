@@ -24,7 +24,7 @@ class ProductCategoryController extends Controller
      */
     public function create()
     {
-        //
+        return view('dashboard.categories.create');
     }
 
     /**
@@ -32,7 +32,39 @@ class ProductCategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //validasi 
+        $validasi = \Validator::make($request->all(), [
+            'name' => 'required|max:30',
+            'slug' => 'required|max:45|unique:product_categories,slug',
+            'description' => 'nullable|max:1000',
+        ]);
+        //jika validasi gagal
+        if ($validasi->fails()) {
+            return redirect()->back()
+                ->withErrors($validasi)
+                ->with('errorMessage','Validasi Gagal')
+                ->withInput();
+        }
+
+        //jika validasi berhasil
+        //simpan data ke database
+        $category = new Categories();
+        $category->name = $request->input('name');
+        $category->slug = $request->input('slug');
+        $category->description = $request->input('description');
+
+        //jika ada gambar
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $imagePath = $image->storeAs('uploads/categories', $imageName, 'public');
+            $category->image = $imagePath;
+        }
+
+        $category->save();
+
+        return redirect()->route('categories.index')
+            ->with('success', 'Data berhasil disimpan');
     }
 
     /**
@@ -48,7 +80,11 @@ class ProductCategoryController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $category = Categories::findOrFail($id);
+
+        return view('dashboard.categories.edit', [
+            'category' => $category
+        ]);
     }
 
     /**
@@ -56,7 +92,23 @@ class ProductCategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $category = Categories::find($id);
+        $category->name = $request->input('name');
+        $category->slug = $request->input('slug');
+        $category->description = $request->input('description');
+
+        //jika ada gambar
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $imagePath = $image->storeAs('uploads/categories', $imageName, 'public');
+            $category->image = $imagePath;
+        }
+
+        $category->save();
+
+        return redirect()->route('categories.index')
+            ->with('success', 'Data berhasil disimpan');
     }
 
     /**
@@ -64,6 +116,10 @@ class ProductCategoryController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $category = Categories::find($id);
+        $category->delete();
+
+        return redirect()->route('categories.index')
+            ->with('success', 'Data berhasil dihapus');
     }
 }
