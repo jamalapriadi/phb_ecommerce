@@ -7,6 +7,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
 
+//kita panggil dulu controller nya
+use App\Http\Controllers\CustomerAuthController;
 
 
 //kode baru diubah menjadi seperti ini
@@ -17,6 +19,30 @@ Route::get('categories',[HomepageController::class, 'categories']);
 Route::get('category/{slug}', [HomepageController::class, 'category']);
 Route::get('cart', [HomepageController::class, 'cart']);
 Route::get('checkout', [HomepageController::class, 'checkout']);
+
+//tentukan saatu lagi, route untuk customer
+Route::group(['prefix'=>'customer'], function(){
+    //route yang ada didalam ini akan dipanggil dengan prefix /customer
+    Route::controller(CustomerAuthController::class)->group(function(){
+        
+        Route::group(['middleware'=>'check_customer_login'], function(){
+            //route untuk login
+            Route::get('login','login')->name('customer.login');
+
+            //route untuk register
+            Route::get('register','register')->name('customer.register');
+
+            //route untuk aksi login
+            Route::post('login','store_login')->name('customer.store_login');
+
+            //route untuk aksi register
+            Route::post('register','store_register')->name('customer.store_register');
+        });
+
+        //route untuk aksi logout
+        Route::post('logout','logout')->name('customer.logout');
+    });
+});
 
 
 Route::group(['prefix'=>'dashboard','middleware'=>['auth','verified']], function(){

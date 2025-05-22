@@ -29,6 +29,32 @@
                     <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
                     <button class="btn btn-outline-success" type="submit">Search</button>
                 </form>
+
+                <!-- jika user sudah login, maka tampilkan info user -->
+
+                <!-- jika belum login, maka tampilkan button login dan register -->
+
+                @if(auth()->guard('customer')->check())
+                    <!-- tampilkan info user disini -->
+                    <div class="dropdown">
+                        <a class="btn btn-outline-secondary dropdown-toggle" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            {{ Auth::guard('customer')->user()->name }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="#">Dashboard</a></li>
+                            <li>
+                                <form method="POST" action="{{ route('customer.logout') }}">
+                                    @csrf
+                                    <button class="dropdown-item" type="submit">Logout</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                @else 
+                    <!-- tampilkan button login register disini -->
+                    <a class="btn btn-outline-primary me-2" href="{{ route('customer.login') }}">Login</a>
+                    <a class="btn btn-primary" href="{{ route('customer.register') }}">Register</a>
+                @endif
             </div>
         </div>
     </nav>
