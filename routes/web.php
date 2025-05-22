@@ -7,6 +7,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
 
+use App\Http\Controllers\CustomerAuthController;
 
 
 //kode baru diubah menjadi seperti ini
@@ -18,6 +19,38 @@ Route::get('category/{slug}', [HomepageController::class, 'category']);
 Route::get('cart', [HomepageController::class, 'cart']);
 Route::get('checkout', [HomepageController::class, 'checkout']);
 
+
+/** route untuk customer */
+Route::group(['prefix'=>'customer'], function(){
+    //semua route yang ada di dalam sini, diakses dengan prefix /customer
+    /**
+     * kita akan membuat route untuk
+     * 1. login (menampilkan halaman login)
+     * 2. register (menampilkan halaman logout)
+     * 3. untuk aksi login
+     * 4. untuk aksi register
+     * 5. untuk aksi logout
+     */
+    Route::controller(CustomerAuthController::class)->group(function(){
+        Route::group(['middleware'=>'check_customer_login'], function(){
+            /** route untuk menampilkan halaman login */
+            Route::get('login','login')->name('customer.login');
+
+            /** route untuk menampilkan halaman register */
+            Route::get('register','register')->name('customer.register');
+
+            /** route untuk aksi login */
+            Route::post('login','store_login')->name('customer.store_login');
+
+            /** route untuk aksi register */
+            Route::post('register','store_register')->name('customer.store_register');
+        });
+
+        /** route untuk aksi logout */
+        Route::post('logout','logout')->name('customer.logout');
+    });
+});
+/** end route untuk customer */
 
 Route::group(['prefix'=>'dashboard','middleware'=>['auth','verified']], function(){
     Route::get('/',[DashboardController::class,'index'])->name('dashboard');
