@@ -32,6 +32,7 @@
 
                 <!-- tambahkan kode disini -->
                 @if(auth()->guard('customer')->check())
+                    <!-- jika customer sudah login, tampilkan profilenya -->
                     <div class="dropdown">
                         <a class="btn btn-outline-secondary dropdown-toggle" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                             {{ Auth::guard('customer')->user()->name }}
@@ -47,6 +48,7 @@
                         </ul>
                     </div>
                 @else
+                    <!-- jika belum login, maka tampilkan button login dan register -->
                     <a class="btn btn-outline-primary me-2" href="{{ route('customer.login') }}">Login</a>
                     <a class="btn btn-primary" href="{{ route('customer.register') }}">Register</a>
                 @endif

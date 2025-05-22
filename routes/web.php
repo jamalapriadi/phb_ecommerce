@@ -6,6 +6,7 @@ use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
+
 use App\Http\Controllers\CustomerAuthController;
 
 //kode baru diubah menjadi seperti ini
@@ -17,28 +18,26 @@ Route::get('category/{slug}', [HomepageController::class, 'category']);
 Route::get('cart', [HomepageController::class, 'cart']);
 Route::get('checkout', [HomepageController::class, 'checkout']);
 
+/** route untuk customer */
 Route::group(['prefix'=>'customer'], function(){
     Route::controller(CustomerAuthController::class)->group(function(){
-        Route::group(['middleware'=>'check_customer_login'], function(){
-            //tampilkan halaman login
-            Route::get('login','login')->name('customer.login');
+        //route untuk login
+        Route::get('login','login')->name('customer.login');
 
-            //aksi login
-            Route::post('login','store_login')->name('customer.store_login');
+        //route untuk aksi login
+        Route::post('login','store_login')->name('customer.store_login');
 
-            //tampilkan halaman register
-            Route::get('register','register')->name('customer.register');
+        //route untuk register
+        Route::get('register','register')->name('customer.register');
 
-            //aksi register
-            Route::post('register','store_register')->name('customer.store_register');
-        });
-        
+        //route untuk aksi register
+        Route::post('register','store_register')->name('customer.store_register');
 
-        //aksi logout
+        //route untuk logout
         Route::post('logout','logout')->name('customer.logout');
-
     });
 });
+/** end route untuk customer */
 
 
 
